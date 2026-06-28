@@ -1,0 +1,39 @@
+name: Build Dz Game Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build Windows Executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Executable with PyInstaller
+        # نقوم ببناء ملف تنفيذي بدون نافذة كونسول (--windowed) ونرفق مجلد الصور والأيقونات
+        run: |
+          pyinstaller --noconfirm --onedir --windowed --name "Dz_Game" --icon "src/assets/images/app-icon.png" --add-data "src/assets;src/assets" main.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DzGame-Windows-Launcher
+          path: dist/Dz_Game/
+
