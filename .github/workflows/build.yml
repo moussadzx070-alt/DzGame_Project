@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -27,13 +27,14 @@ jobs:
           pip install pyinstaller
 
       - name: Build Executable with PyInstaller
-        # نقوم ببناء ملف تنفيذي بدون نافذة كونسول (--windowed) ونرفق مجلد الصور والأيقونات
+        # استخدام cmd لتفادي مشاكل PowerShell مع الفاصلة المنقوطة (;)
+        shell: cmd  
+        # تمت إزالة --icon مؤقتاً لأن ويندوز يتطلب ملف بصيغة .ico وليس .png
         run: |
-          pyinstaller --noconfirm --onedir --windowed --name "Dz_Game" --icon "src/assets/images/app-icon.png" --add-data "src/assets;src/assets" main.py
+          pyinstaller --noconfirm --onedir --windowed --name "Dz_Game" --add-data "src/assets;src/assets" main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: DzGame-Windows-Launcher
           path: dist/Dz_Game/
-
